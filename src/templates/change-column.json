@@ -1,0 +1,3 @@
+{
+  "tpl": "await queryInterface.changeColumn({tableName}, {column}, {attribute});"
+}

@@ -19,7 +19,7 @@ export const parseObject = (target: any) => {
     str = parseObjectWithSymbols(target, symbols);
   }
   for (const [k, v] of Object.entries(target)) {
-    if (!v) {
+    if (v === null || v === undefined) {
       continue;
     }
     str = `${str}${parseKeyValue(k, v)},`;

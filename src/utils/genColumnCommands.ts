@@ -1,6 +1,7 @@
 import {
   loadAddColumnTemplate,
   loadRemoveColumnTemplate,
+  loadChangeColumnTemplate,
 } from './loadTemplates';
 import { parseObject } from './parse';
 
@@ -22,4 +23,15 @@ export const genRemoveColumnCommand = (
   return loadRemoveColumnTemplate()
     .replace('{tableName}', `'${tableName}'`)
     .replace('{column}', `'${columnName}'`);
+};
+
+export const genChangeColumnCommand = (
+  tableName: string,
+  columnName: string,
+  attribute: any,
+) => {
+  return loadChangeColumnTemplate()
+    .replace('{tableName}', `'${tableName}'`)
+    .replace('{column}', `'${columnName}'`)
+    .replace('{attribute}', parseObject(attribute));
 };

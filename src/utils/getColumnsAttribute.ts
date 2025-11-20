@@ -1,7 +1,9 @@
-import { ModelAttributeColumnOptions } from "sequelize/types";
-import { extractColumns } from "./parseDataType";
+import { ModelAttributeColumnOptions } from 'sequelize/types';
+import { extractColumns } from './parseDataType';
 
-export const getColumnsAttribute = (modelAttribute: ModelAttributeColumnOptions) => {
+export const getColumnsAttribute = (
+  modelAttribute: ModelAttributeColumnOptions,
+) => {
   return {
     [modelAttribute.field!]: extractColumns(
       [
@@ -13,6 +15,7 @@ export const getColumnsAttribute = (modelAttribute: ModelAttributeColumnOptions)
         'autoIncrementIdentity',
         'comment',
         'validate',
+        'defaultValue',
       ],
       modelAttribute,
     ),

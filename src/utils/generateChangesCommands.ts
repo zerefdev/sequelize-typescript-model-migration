@@ -8,6 +8,7 @@ import {
 import {
   genAddColumnCommand,
   genRemoveColumnCommand,
+  genChangeColumnCommand,
 } from './genColumnCommands';
 import { generateMigrationCommands } from './genCommands';
 import {
@@ -231,6 +232,29 @@ export const generateChangesCommands = (
         }
         break;
       case 'E':
+        if (dif.path.length >= 3 && dif.path[1] === 'columns') {
+          upCommands.push({
+            order: 1,
+            cmds: [
+              genChangeColumnCommand(
+                dif.path[0],
+                dif.path[2],
+                (curState as any)[dif.path[0]].columns[dif.path[2]],
+              ),
+            ],
+          });
+          downCommands.push({
+            order: 1,
+            cmds: [
+              genChangeColumnCommand(
+                dif.path[0],
+                dif.path[2],
+                (prevState as any)[dif.path[0]].columns[dif.path[2]],
+              ),
+            ],
+          });
+          break;
+        }
         if (dif.path.length > 1 && dif.path[1] === 'indexes') {
           upCommands.push(
             {

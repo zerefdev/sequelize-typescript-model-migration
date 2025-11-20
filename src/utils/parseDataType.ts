@@ -12,6 +12,7 @@ import {
   GeometryDataType,
   IntegerDataType,
   ModelAttributeColumnOptions,
+  NumberDataType,
   RangeableDataType,
   RangeDataType,
   RealDataType,
@@ -20,12 +21,12 @@ import {
 } from 'sequelize/types';
 import Logger from './logger';
 
-export const parseString = (type: StringDataType) => {
+export const parseStringChar = (type: StringDataType) => {
   const extraBinary = type.options?.binary ? `,true` : '';
   const extra = type.options?.length
     ? `(${type.options?.length}${extraBinary})`
     : '';
-  return `Sequelize.STRING${extra}`;
+  return `Sequelize.${type.constructor.name}${extra}`;
 };
 
 export const parseTextDateBlob = (
@@ -41,7 +42,7 @@ export const parseTextDateBlob = (
   return `Sequelize.${type.constructor.name}${extra}`;
 };
 
-export const parseBigIntInteger = (type: BigIntDataType | IntegerDataType) => {
+export const parseAllInt = (type: BigIntDataType | IntegerDataType) => {
   const unsigned = type.options?.unsigned ? `.UNSIGNED` : '';
   const zerofill = type.options?.zerofill ? `.ZEROFILL` : '';
   const length = type.options?.length ? `(${type.options?.length})` : '';
@@ -110,15 +111,19 @@ export const parseDataType = (
   type: AbstractDataTypeConstructor | RangeableDataType,
 ): string => {
   switch (type.constructor.name) {
+    case 'CHAR':
     case 'STRING':
-      return parseString(type as StringDataType);
+      return parseStringChar(type as StringDataType);
     case 'TEXT':
     case 'DATE':
     case 'BLOB':
       return parseTextDateBlob(type as TextDataType);
-    case 'BIGINT':
+    case 'TINYINT':
+    case 'SMALLINT':
+    case 'MEDIUMINT':
     case 'INTEGER':
-      return parseBigIntInteger(type as BigIntDataType);
+    case 'BIGINT':
+      return parseAllInt(type as NumberDataType);
     case 'FLOAT':
     case 'REAL':
     case 'DOUBLE':
@@ -147,6 +152,12 @@ export const extractColumns = (
       out[key] = parseDataType(value);
       continue;
     }
+
+    if (key === 'defaultValue' && typeof value === 'string') {
+      out[key] = `'${value}'`;
+      continue;
+    }
+
     if (fields.includes(key)) {
       out[key] = value;
     }
