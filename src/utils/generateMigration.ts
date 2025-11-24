@@ -27,6 +27,10 @@ export const generateMigration = async (
     ? generateChangesCommands(snapshot, extractedModels)
     : generateBrandnewCommands(extractedModels, templates);
 
+  if (!commands) {
+    return;
+  }
+
   await createSnapshot(extractedModels, meta, options);
 
   await createMigrationFile(commands, meta, options);
